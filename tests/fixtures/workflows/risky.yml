@@ -1,0 +1,32 @@
+name: Risky Quilt
+on:
+  pull_request_target:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [20, 22]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Cache deps
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            npm-
+      - name: Dangerous echo
+        run: echo "${{ github.event.pull_request.title }}"
+      - name: Upload logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs
+          path: logs/
+      - name: Use secret
+        run: echo "${{ secrets.NPM_TOKEN }}" >/dev/null

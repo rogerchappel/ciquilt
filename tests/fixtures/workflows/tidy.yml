@@ -1,0 +1,11 @@
+name: Tidy Quilt
+on: [push]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Run tests
+        run: npm test
