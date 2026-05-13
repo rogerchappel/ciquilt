@@ -23,7 +23,7 @@
     "build": "tsc -p tsconfig.json",
     "check": "tsc -p tsconfig.json --noEmit",
     "test": "npm run build && node --test dist/**/*.test.js",
-    "smoke": "npm run build && node dist/cli.js scan tests/fixtures/workflows --format markdown --output tmp/smoke.md && node dist/cli.js scan tests/fixtures/workflows --format json --output tmp/smoke.json && node dist/cli.js scan tests/fixtures/workflows --format sarif --output tmp/smoke.sarif.json",
+    "smoke": "npm run build && bash tests/cli-smoke.sh",
     "package:smoke": "npm pack --dry-run",
     "release:check": "npm test && npm run check && npm run smoke && npm run package:smoke"
   },
