@@ -47,6 +47,13 @@ ciquilt scan .github/workflows --fail-on-findings
 
 `--fail-on-findings` exits `2` when findings exist. Without it, findings are reported but the scan exits successfully.
 
+Try the included risky workflow fixture when you want to see the advisory report without pointing ciquilt at a real repository:
+
+```bash
+node dist/cli.js scan examples --format markdown
+node dist/cli.js scan examples --format json --output /tmp/ciquilt-example.json
+```
+
 ## Example
 
 ```markdown
