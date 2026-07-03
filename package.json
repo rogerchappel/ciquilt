@@ -29,7 +29,8 @@
     "test": "npm run build && node --test dist/**/*.test.js",
     "smoke": "npm run build && bash tests/cli-smoke.sh",
     "package:smoke": "npm pack --dry-run",
-    "release:check": "npm test && npm run check && npm run smoke && npm run package:smoke"
+    "release:check": "npm test && npm run check && npm run smoke && npm run package:smoke",
+    "lint": "npm run check"
   },
   "keywords": [
     "github-actions",
