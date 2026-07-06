@@ -10,6 +10,8 @@ format and uses semantic versioning when versioned releases are published.
 ### Added
 
 - Initial project setup.
+- Package smoke verification now checks the CLI bin target, release metadata,
+  and npm files allowlist before running the dry-run pack.
 
 ## Release Links
 
