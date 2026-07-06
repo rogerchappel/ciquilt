@@ -80,8 +80,17 @@ npm test
 npm run check
 npm run build
 npm run smoke
+npm run package:smoke
+npm run release:check
 bash scripts/validate.sh
 ```
+
+## Release verification
+
+Run `npm run release:check` before publishing or tagging. The package smoke
+step builds the CLI, verifies the published `ciquilt` bin target, checks the
+package metadata and files allowlist, then runs `npm pack --dry-run` so the
+tarball contents are visible in review logs.
 
 ## Contributing
 
