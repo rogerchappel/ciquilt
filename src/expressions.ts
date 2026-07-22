@@ -1,5 +1,5 @@
 const SECRET_PATTERN = /\$\{\{\s*secrets\.([A-Za-z0-9_:-]+)\s*\}\}/g;
-const EXPRESSION_PATTERN = /\$\{\{[^}]+\}\}/g;
+const EXPRESSION_PATTERN = /\$\{\{[^}]+\}\}/;
 
 export function findSecretExpressions(value: unknown): string[] {
   const found = new Set<string>();
