@@ -17,7 +17,10 @@ It is not a stern policy robot. It is a careful quilt inspector: it shows how th
 
 - Broad write permissions such as `contents: write`.
 - `pull_request_target` workflows that need extra caution.
-- Actions not pinned to a full commit SHA.
+- Remote actions not pinned to a full 40-character commit SHA.
+- Docker step images not pinned to a full `sha256` digest. Tags and implicit
+  `latest` references are reported as mutable; repository-local `./...`
+  actions are trusted from the checked-out workflow and do not require a ref.
 - Broad cache restore keys.
 - Jobs without `timeout-minutes`.
 - Shell steps that interpolate untrusted GitHub event context.
@@ -46,6 +49,8 @@ ciquilt scan .github/workflows --fail-on-findings
 ```
 
 `--fail-on-findings` exits `2` when findings exist. Without it, findings are reported but the scan exits successfully.
+JSON findings include `sourceLine`, Markdown locations include `:line`, and
+SARIF results use that physical YAML line for code-scanning annotations.
 
 Try the included risky workflow fixture when you want to see the advisory report without pointing ciquilt at a real repository:
 

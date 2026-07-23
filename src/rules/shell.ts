@@ -14,6 +14,7 @@ export function checkShellInjection(workflow: WorkflowSummary): Finding[] {
           workflow,
           jobId: job.id,
           stepIndex: step.index,
+          sourceLine: step.runLine,
           message: `Step '${step.name ?? step.index + 1}' uses an event/head ref expression directly in shell code.`,
           recommendation: "Pass values through env variables, quote expansions, or avoid running untrusted event data as shell text.",
         }));

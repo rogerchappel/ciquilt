@@ -19,6 +19,20 @@ test("scan emits core MVP risk findings", async () => {
   }
 });
 
+test("action source rules distinguish local Docker and remote references", async () => {
+  const report = await scan({ root: "tests/fixtures/workflows" });
+  const findings = report.findings.filter((finding) => finding.workflow.endsWith("action-sources.yml"));
+  const pinning = findings.filter((finding) => finding.ruleId === "unpinned-action");
+  assert.equal(pinning.length, 2);
+  assert.deepEqual(pinning.map((finding) => finding.sourceLine), [12, 16]);
+  assert.match(pinning[0].message, /mutable Docker image reference/);
+  assert.match(pinning[1].message, /actions\/setup-node@v4 uses mutable ref v4/);
+  assert.ok(findings.every((finding) => !finding.message.includes("./local-action")));
+
+  const shell = findings.find((finding) => finding.ruleId === "shell-expression-injection");
+  assert.equal(shell?.sourceLine, 20);
+});
+
 test("shell injection checks every consecutive expression", () => {
   const workflow: WorkflowSummary = {
     file: ".github/workflows/issues.yml",

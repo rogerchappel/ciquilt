@@ -8,8 +8,11 @@ export function finding(input: {
   workflow: WorkflowSummary;
   jobId?: string;
   stepIndex?: number;
+  sourceLine?: number;
   recommendation: string;
 }): Finding {
+  const job = input.jobId ? input.workflow.jobs.find((candidate) => candidate.id === input.jobId) : undefined;
+  const step = input.stepIndex === undefined ? undefined : job?.steps[input.stepIndex];
   return {
     severity: input.severity ?? "warning",
     workflow: input.workflow.file,
@@ -18,6 +21,7 @@ export function finding(input: {
     message: input.message,
     jobId: input.jobId,
     stepIndex: input.stepIndex,
+    sourceLine: input.sourceLine ?? step?.sourceLine ?? job?.sourceLine ?? input.workflow.sourceLine,
     recommendation: input.recommendation,
   };
 }
