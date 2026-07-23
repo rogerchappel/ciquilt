@@ -39,7 +39,7 @@ function toResult(finding: Finding) {
     locations: [{
       physicalLocation: {
         artifactLocation: { uri: finding.workflow },
-        region: finding.stepIndex === undefined ? undefined : { startLine: finding.stepIndex + 1 },
+        region: finding.sourceLine === undefined ? undefined : { startLine: finding.sourceLine },
       },
       logicalLocations: finding.jobId ? [{ name: finding.jobId, kind: "function" }] : [],
     }],

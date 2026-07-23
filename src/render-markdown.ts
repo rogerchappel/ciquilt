@@ -50,7 +50,7 @@ function renderFinding(finding: Finding): string[] {
     `### ${finding.title}`,
     "",
     `- Rule: \`${finding.ruleId}\` (${finding.severity})`,
-    `- Location: ${finding.workflow}${finding.jobId ? ` / ${finding.jobId}` : ""}${finding.stepIndex !== undefined ? ` / step ${finding.stepIndex + 1}` : ""}`,
+    `- Location: ${finding.workflow}${finding.sourceLine ? `:${finding.sourceLine}` : ""}${finding.jobId ? ` / ${finding.jobId}` : ""}${finding.stepIndex !== undefined ? ` / step ${finding.stepIndex + 1}` : ""}`,
     `- Problem: ${finding.message}`,
     `- Fix: ${finding.recommendation}`,
     "",
