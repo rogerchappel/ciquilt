@@ -12,4 +12,27 @@ test("renderers emit markdown json and sarif", async () => {
   assert.equal(json.tool, "ciquilt");
   assert.equal(sarif.version, "2.1.0");
   assert.ok(sarif.runs[0].results.length > 0);
+
+  const actionFindings = json.findings.filter(
+    (finding: { workflow: string }) => finding.workflow.endsWith("action-sources.yml"),
+  );
+  assert.deepEqual(
+    actionFindings
+      .filter((finding: { ruleId: string }) => finding.ruleId === "unpinned-action")
+      .map((finding: { sourceLine: number }) => finding.sourceLine),
+    [12, 16],
+  );
+  assert.match(markdown, /action-sources\.yml:20 \/ scan \/ step 6/);
+
+  const actionResults = sarif.runs[0].results.filter(
+    (result: { locations: Array<{ physicalLocation: { artifactLocation: { uri: string } } }> }) =>
+      result.locations[0].physicalLocation.artifactLocation.uri.endsWith("action-sources.yml"),
+  );
+  assert.deepEqual(
+    actionResults.map(
+      (result: { locations: Array<{ physicalLocation: { region: { startLine: number } } }> }) =>
+        result.locations[0].physicalLocation.region.startLine,
+    ).sort((left: number, right: number) => left - right),
+    [12, 16, 20],
+  );
 });
