@@ -13,6 +13,13 @@ format and uses semantic versioning when versioned releases are published.
 - Package smoke verification now checks the CLI bin target, release metadata,
   and npm files allowlist before running the dry-run pack.
 
+### Fixed
+
+- Distinguish local actions, remote action refs, and Docker image digests when
+  checking pinned dependencies.
+- Preserve workflow source lines so JSON, Markdown, and SARIF findings point to
+  the relevant job or step property instead of an array index.
+
 ## Release Links
 
 - Unreleased:
