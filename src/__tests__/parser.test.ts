@@ -4,7 +4,7 @@ import { parseWorkflows } from "../parser.js";
 
 test("parseWorkflows summarizes triggers jobs matrices and permissions", async () => {
   const workflows = await parseWorkflows("tests/fixtures/workflows");
-  assert.equal(workflows.length, 2);
+  assert.equal(workflows.length, 3);
   const risky = workflows.find((workflow) => workflow.name === "Risky Quilt");
   assert.ok(risky);
   assert.deepEqual(risky.triggers.map((trigger) => trigger.name).sort(), ["pull_request_target", "push"]);
