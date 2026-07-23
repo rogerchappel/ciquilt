@@ -12,4 +12,9 @@ test("parseWorkflows summarizes triggers jobs matrices and permissions", async (
   assert.deepEqual(risky.jobs[0].runsOn, ["ubuntu-latest"]);
   assert.deepEqual(risky.jobs[0].matrix, { node: [20, 22] });
   assert.deepEqual(risky.permissions, { contents: "write" });
+  assert.equal(risky.sourceLine, 1);
+  assert.equal(risky.jobs[0].sourceLine, 9);
+  assert.equal(risky.jobs[0].steps[0].sourceLine, 15);
+  assert.equal(risky.jobs[0].steps[0].usesLine, 16);
+  assert.equal(risky.jobs[0].steps[2].runLine, 25);
 });

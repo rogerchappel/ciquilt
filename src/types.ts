@@ -20,6 +20,7 @@ export interface WorkflowPermission {
 
 export interface WorkflowJob {
   id: string;
+  sourceLine?: number;
   name?: string;
   runsOn?: string[];
   needs: string[];
@@ -31,6 +32,9 @@ export interface WorkflowJob {
 
 export interface WorkflowStep {
   index: number;
+  sourceLine?: number;
+  usesLine?: number;
+  runLine?: number;
   name?: string;
   uses?: string;
   run?: string;
@@ -73,11 +77,13 @@ export interface Finding {
   workflow: string;
   jobId?: string;
   stepIndex?: number;
+  sourceLine?: number;
   recommendation: string;
 }
 
 export interface WorkflowSummary {
   file: string;
+  sourceLine?: number;
   name: string;
   triggers: WorkflowTrigger[];
   permissions: Record<string, string> | string | null;
