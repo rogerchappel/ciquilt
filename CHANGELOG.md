@@ -10,6 +10,8 @@ format and uses semantic versioning when versioned releases are published.
 ### Added
 
 - Initial project setup.
+- Publish validated tag artifacts to npm with trusted publishing before creating
+  the corresponding GitHub release.
 - Package smoke verification now checks the CLI bin target, release metadata,
   and npm files allowlist before running the dry-run pack.
 

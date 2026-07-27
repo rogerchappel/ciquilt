@@ -29,7 +29,8 @@
     "test": "npm run build && node --test dist/**/*.test.js",
     "smoke": "npm run build && bash tests/cli-smoke.sh",
     "package:smoke": "npm run build && node scripts/verify-package.mjs && npm pack --dry-run",
-    "release:check": "npm test && npm run check && npm run smoke && npm run package:smoke",
+    "release:verify": "npm run build && node scripts/verify-release.mjs",
+    "release:check": "npm test && npm run check && npm run smoke && npm run package:smoke && npm run release:verify",
     "lint": "npm run check"
   },
   "keywords": [
@@ -42,6 +43,10 @@
   ],
   "author": "Roger Chappel",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "dependencies": {
     "js-yaml": "^4.1.0"
   },

@@ -27,14 +27,27 @@ It is not a stern policy robot. It is a careful quilt inspector: it shows how th
 
 ## Install
 
+The npm package will be available after the first tagged release is published.
+Until then, install and run `ciquilt` from a clone:
+
+```bash
+git clone https://github.com/rogerchappel/ciquilt.git
+cd ciquilt
+npm ci
+npm run build
+npm link
+```
+
+After the first tagged release:
+
 ```bash
 npm install -g ciquilt
 ```
 
-From a clone:
+To run directly from a clone without linking:
 
 ```bash
-npm install
+npm ci
 npm run build
 node dist/cli.js scan tests/fixtures/workflows
 ```
@@ -102,3 +115,10 @@ tarball contents are visible in review logs.
 Small, focused PRs are easiest to review. Add fixtures for new rules, keep wording practical, and avoid rules that require network access or pretend to fully simulate GitHub Actions.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md).
+
+## Releases
+
+Pushing a semantic-version tag (`vX.Y.Z`) runs the complete release checks, packs
+the npm artifact, and publishes it with npm trusted publishing. The workflow
+creates the GitHub release and attaches the same tarball only after npm accepts
+the package, so a failed publication cannot leave a misleading GitHub release.
