@@ -43,6 +43,10 @@
   ],
   "author": "Roger Chappel",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "dependencies": {
     "js-yaml": "^4.1.0"
   },

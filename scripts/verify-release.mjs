@@ -7,19 +7,26 @@ const workflow = load(await readFile(".github/workflows/release.yml", "utf8"));
 const steps = workflow.jobs.release.steps;
 const stepIndex = (name) => steps.findIndex((step) => step.name === name);
 
+assert.equal(workflow.permissions["id-token"], "write");
+const setupNode = steps.find((step) => step.uses?.startsWith("actions/setup-node@"));
+assert.equal(setupNode?.with?.["registry-url"], "https://registry.npmjs.org");
+
 const checks = stepIndex("Run release checks");
 const pack = stepIndex("Build package");
+const npmUpgrade = stepIndex("Upgrade npm for trusted publishing");
 const publish = stepIndex("Publish package to npm");
 const githubRelease = stepIndex("Create GitHub release");
 
 assert.ok(checks >= 0, "release workflow must run release checks");
 assert.ok(pack > checks, "package must be built after release checks");
-assert.ok(publish > pack, "npm publication must follow package creation");
+assert.ok(npmUpgrade > pack, "trusted publishing must use a supported npm CLI");
+assert.ok(publish > npmUpgrade, "npm publication must follow package creation");
 assert.ok(
   githubRelease > publish,
   "GitHub release must only be created after npm publication succeeds",
 );
 assert.match(steps[publish].run, /^npm publish \*\.tgz$/m);
+assert.match(steps[npmUpgrade].run, /^npm install --global npm@11$/m);
 
 const packageJson = JSON.parse(await readFile("package.json", "utf8"));
 assert.equal(packageJson.publishConfig?.access, "public");

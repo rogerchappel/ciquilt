@@ -39,6 +39,10 @@ jobs:
         run: npm run release:check
       - name: Build package
         run: npm pack
+      - name: Upgrade npm for trusted publishing
+        run: npm install --global npm@11
+      - name: Publish package to npm
+        run: npm publish *.tgz
       - name: Generate release notes
         run: node /tmp/releasebox/bin/releasebox.js notes . > RELEASE_NOTES.md
       - name: Create GitHub release
