@@ -1,0 +1,9 @@
+name: Location coverage
+on: push
+jobs:
+  "quoted job":
+    runs-on: ubuntu-latest
+    steps:
+      - name: Quoted property
+        "uses": actions/checkout@v4
+      - "run": npm test
