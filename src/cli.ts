@@ -3,12 +3,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { render, parseFormat } from "./render.js";
 import { scan } from "./scan.js";
-
-interface CliOptions {
-  format?: string;
-  output?: string;
-  failOnFindings: boolean;
-}
+import { parseScanArgs } from "./cli-args.js";
 
 async function main(argv: string[]): Promise<number> {
   const [command, ...rest] = argv;
@@ -22,6 +17,11 @@ async function main(argv: string[]): Promise<number> {
   }
   if (command !== "scan") throw new Error(`Unknown command '${command}'.`);
 
+  const helpRequested = rest.includes("--help") || rest.includes("-h");
+  if (helpRequested) {
+    printHelp();
+    return 0;
+  }
   const { target, options } = parseScanArgs(rest);
   const report = await scan({ root: target });
   const output = render(report, parseFormat(options.format));
@@ -32,29 +32,6 @@ async function main(argv: string[]): Promise<number> {
     process.stdout.write(output);
   }
   return options.failOnFindings && report.findings.length > 0 ? 2 : 0;
-}
-
-function parseScanArgs(args: string[]): { target: string; options: CliOptions } {
-  const options: CliOptions = { failOnFindings: false };
-  const positionals: string[] = [];
-  for (let i = 0; i < args.length; i += 1) {
-    const arg = args[i];
-    if (arg === "--format" || arg === "-f") options.format = requireValue(args, ++i, arg);
-    else if (arg === "--output" || arg === "-o") options.output = requireValue(args, ++i, arg);
-    else if (arg === "--fail-on-findings") options.failOnFindings = true;
-    else if (arg === "--help" || arg === "-h") {
-      printHelp();
-      process.exit(0);
-    } else if (arg.startsWith("-")) throw new Error(`Unknown option '${arg}'.`);
-    else positionals.push(arg);
-  }
-  return { target: positionals[0] ?? ".github/workflows", options };
-}
-
-function requireValue(args: string[], index: number, flag: string): string {
-  const value = args[index];
-  if (!value) throw new Error(`${flag} requires a value.`);
-  return value;
 }
 
 function printHelp(): void {
