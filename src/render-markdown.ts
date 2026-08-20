@@ -37,6 +37,7 @@ export function renderMarkdown(report: ScanReport): string {
 function renderJob(job: WorkflowJob): string[] {
   return [
     `  - \`${job.id}\`${job.name ? ` (${job.name})` : ""}`,
+    `    - uses: ${job.uses ? `\`${job.uses}\`` : "none"}`,
     `    - runs-on: ${job.runsOn?.map((runner) => `\`${runner}\``).join(", ") ?? "unspecified"}`,
     `    - needs: ${job.needs.map((need) => `\`${need}\``).join(", ") || "none"}`,
     `    - timeout-minutes: ${job.timeoutMinutes ?? "missing"}`,

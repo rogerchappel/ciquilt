@@ -22,6 +22,7 @@ export interface WorkflowJob {
   id: string;
   sourceLine?: number;
   name?: string;
+  uses?: string;
   runsOn?: string[];
   needs: string[];
   timeoutMinutes?: number;
