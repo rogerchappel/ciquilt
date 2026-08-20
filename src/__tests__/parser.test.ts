@@ -4,7 +4,7 @@ import { parseWorkflows } from "../parser.js";
 
 test("parseWorkflows summarizes triggers jobs matrices and permissions", async () => {
   const workflows = await parseWorkflows("tests/fixtures/workflows");
-  assert.equal(workflows.length, 4);
+  assert.equal(workflows.length, 5);
   const risky = workflows.find((workflow) => workflow.name === "Risky Quilt");
   assert.ok(risky);
   assert.deepEqual(risky.triggers.map((trigger) => trigger.name).sort(), ["pull_request_target", "push"]);
@@ -17,6 +17,13 @@ test("parseWorkflows summarizes triggers jobs matrices and permissions", async (
   assert.equal(risky.jobs[0].steps[0].sourceLine, 15);
   assert.equal(risky.jobs[0].steps[0].usesLine, 16);
   assert.equal(risky.jobs[0].steps[2].runLine, 25);
+});
+
+test("parseWorkflows preserves reusable workflow calls", async () => {
+  const workflows = await parseWorkflows("tests/fixtures/workflows");
+  const reusable = workflows.find((workflow) => workflow.name === "Reusable workflow calls");
+  assert.ok(reusable);
+  assert.equal(reusable.jobs[0].uses, "rogerchappel/shared-workflows/.github/workflows/test.yml@main");
 });
 
 test("parseWorkflows preserves locations for quoted keys and sequence steps", async () => {

@@ -19,6 +19,7 @@ function normalizeJob(id: string, value: unknown): WorkflowJob {
   return {
     id,
     name: stringOrUndefined(raw.name),
+    uses: stringOrUndefined(raw.uses),
     runsOn: normalizeRunsOn(raw["runs-on"]),
     needs: normalizeNeeds(raw.needs),
     timeoutMinutes: numberOrUndefined(raw["timeout-minutes"]),

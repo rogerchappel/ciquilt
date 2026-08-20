@@ -33,6 +33,15 @@ test("action source rules distinguish local Docker and remote references", async
   assert.equal(shell?.sourceLine, 20);
 });
 
+test("missing-timeout ignores reusable workflow calls but reports run jobs", async () => {
+  const report = await scan({ root: "tests/fixtures/workflows" });
+  const findings = report.findings.filter(
+    (finding) => finding.workflow.endsWith("reusable-call.yml") && finding.ruleId === "missing-timeout",
+  );
+
+  assert.deepEqual(findings.map((finding) => finding.jobId), ["ordinary"]);
+});
+
 test("shell injection checks every consecutive expression", () => {
   const workflow: WorkflowSummary = {
     file: ".github/workflows/issues.yml",

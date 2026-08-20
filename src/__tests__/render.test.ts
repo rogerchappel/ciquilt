@@ -23,6 +23,8 @@ test("renderers emit markdown json and sarif", async () => {
     [12, 16],
   );
   assert.match(markdown, /action-sources\.yml:20 \/ scan \/ step 6/);
+  assert.match(markdown, /uses: `rogerchappel\/shared-workflows\/\.github\/workflows\/test\.yml@main`/);
+  assert.doesNotMatch(markdown, /Job invoke-shared can run until GitHub's default timeout/);
 
   const actionResults = sarif.runs[0].results.filter(
     (result: { locations: Array<{ physicalLocation: { artifactLocation: { uri: string } } }> }) =>

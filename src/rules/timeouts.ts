@@ -4,7 +4,7 @@ import { finding } from "./util.js";
 export function checkTimeouts(workflow: WorkflowSummary): Finding[] {
   const findings: Finding[] = [];
   for (const job of workflow.jobs) {
-    if (job.timeoutMinutes === undefined) {
+    if (job.uses === undefined && job.timeoutMinutes === undefined) {
       findings.push(finding({
         ruleId: "missing-timeout",
         title: "Job has no timeout-minutes",
