@@ -1,0 +1,9 @@
+name: Reusable workflow calls
+on: push
+jobs:
+  invoke-shared:
+    uses: rogerchappel/shared-workflows/.github/workflows/test.yml@main
+  ordinary:
+    runs-on: ubuntu-latest
+    steps:
+      - run: npm test
