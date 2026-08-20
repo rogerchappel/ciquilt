@@ -84,6 +84,7 @@ Scanned `2` workflow(s). Findings: **6**.
 ### Job has no timeout-minutes
 - Rule: `missing-timeout` (note)
 - Fix: Set timeout-minutes for every job based on expected runtime plus margin.
+- Scope: Run/steps jobs only. Reusable-workflow call jobs declared with job-level `uses` are excluded because GitHub Actions does not support `timeout-minutes` on those jobs.
 ```
 
 ## Safety posture
