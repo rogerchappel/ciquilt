@@ -4,6 +4,9 @@ import { readFile } from "node:fs/promises";
 import { load } from "js-yaml";
 
 const workflow = load(await readFile(".github/workflows/release.yml", "utf8"));
+const dryRunWorkflow = load(
+  await readFile(".github/workflows/release-dry-run.yml", "utf8"),
+);
 const steps = workflow.jobs.release.steps;
 const stepIndex = (name) => steps.findIndex((step) => step.name === name);
 
@@ -13,20 +16,43 @@ assert.equal(setupNode?.with?.["registry-url"], "https://registry.npmjs.org");
 
 const checks = stepIndex("Run release checks");
 const pack = stepIndex("Build package");
-const npmUpgrade = stepIndex("Upgrade npm for trusted publishing");
+const npmUpgrade = stepIndex("Install trusted publishing npm");
 const publish = stepIndex("Publish package to npm");
 const githubRelease = stepIndex("Create GitHub release");
 
 assert.ok(checks >= 0, "release workflow must run release checks");
+assert.ok(npmUpgrade > -1, "release workflow must install the pinned npm CLI");
+assert.ok(checks > npmUpgrade, "release checks must use the pinned npm CLI");
 assert.ok(pack > checks, "package must be built after release checks");
-assert.ok(npmUpgrade > pack, "trusted publishing must use a supported npm CLI");
-assert.ok(publish > npmUpgrade, "npm publication must follow package creation");
+assert.ok(publish > pack, "npm publication must follow package creation");
 assert.ok(
   githubRelease > publish,
   "GitHub release must only be created after npm publication succeeds",
 );
-assert.match(steps[publish].run, /^npm publish \*\.tgz$/m);
-assert.match(steps[npmUpgrade].run, /^npm install --global npm@11$/m);
+assert.equal(steps[npmUpgrade].run, "npm install --global npm@11.5.1");
+assert.equal(steps[pack].id, "pack");
+assert.match(steps[pack].run, /npm pack --json/);
+assert.match(steps[pack].run, /echo "filename=\$package_file" >> "\$GITHUB_OUTPUT"/);
+
+const artifactReference = "${{ steps.pack.outputs.filename }}";
+assert.equal(steps[publish].run, `npm publish "${artifactReference}"`);
+assert.match(steps[githubRelease].run, new RegExp(`"\\$\\{\\{ steps\\.pack\\.outputs\\.filename \\}\\}"$`));
+assert.doesNotMatch(steps[publish].run, /\*/);
+assert.doesNotMatch(steps[githubRelease].run, /\*\.tgz/);
+
+const dryRunSteps = dryRunWorkflow.jobs["dry-run"].steps;
+const dryRunUpgrade = dryRunSteps.findIndex(
+  (step) => step.name === "Install trusted publishing npm",
+);
+const dryRunChecks = dryRunSteps.findIndex(
+  (step) => step.name === "Run release checks",
+);
+assert.ok(dryRunUpgrade > -1, "dry run must install the pinned npm CLI");
+assert.equal(
+  dryRunSteps[dryRunUpgrade].run,
+  "npm install --global npm@11.5.1",
+);
+assert.ok(dryRunChecks > dryRunUpgrade, "dry-run checks must use pinned npm");
 
 const packageJson = JSON.parse(await readFile("package.json", "utf8"));
 assert.equal(packageJson.publishConfig?.access, "public");

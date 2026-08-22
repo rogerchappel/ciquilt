@@ -120,6 +120,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md).
 ## Releases
 
 Pushing a semantic-version tag (`vX.Y.Z`) runs the complete release checks, packs
-the npm artifact, and publishes it with npm trusted publishing. The workflow
-creates the GitHub release and attaches the same tarball only after npm accepts
-the package, so a failed publication cannot leave a misleading GitHub release.
+the npm artifact, and publishes it with trusted publishing using the pinned
+`npm@11.5.1` prerequisite. The workflow captures the filename returned by
+`npm pack`, publishes that exact file, and attaches the same file to the GitHub
+release only after npm accepts the package. The release dry run installs the
+same pinned npm version before checking this contract.

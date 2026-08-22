@@ -37,6 +37,8 @@ jobs:
           npm --prefix /tmp/releasebox run build
       - name: ReleaseBox readiness check
         run: node /tmp/releasebox/bin/releasebox.js check .
+      - name: Install trusted publishing npm
+        run: npm install --global npm@11.5.1
       - name: Run release checks
         run: npm run release:check
       - name: Release notes preview
