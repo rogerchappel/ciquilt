@@ -3,6 +3,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { render, parseFormat } from "./render.js";
 import { scan } from "./scan.js";
+import { PACKAGE_VERSION } from "./version.js";
 import { parseScanArgs } from "./cli-args.js";
 
 async function main(argv: string[]): Promise<number> {
@@ -12,7 +13,7 @@ async function main(argv: string[]): Promise<number> {
     return 0;
   }
   if (command === "--version" || command === "-v") {
-    console.log("0.1.0");
+    console.log(PACKAGE_VERSION);
     return 0;
   }
   if (command !== "scan") throw new Error(`Unknown command '${command}'.`);
