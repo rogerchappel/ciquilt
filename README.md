@@ -107,9 +107,11 @@ bash scripts/validate.sh
 ## Release verification
 
 Run `npm run release:check` before publishing or tagging. The package smoke
-step builds the CLI, verifies the published `ciquilt` bin target, checks the
-package metadata and files allowlist, then runs `npm pack --dry-run` so the
-tarball contents are visible in review logs.
+step builds the CLI and verifies that both `ciquilt --version` and the JSON scan
+report read their identity from the package's `package.json` version. It also
+verifies the published `ciquilt` bin target, checks the package metadata and
+files allowlist, then runs `npm pack --dry-run` so the tarball contents are
+visible in review logs.
 
 ## Contributing
 
