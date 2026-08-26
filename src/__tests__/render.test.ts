@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { render } from "../render.js";
 import { scan } from "../scan.js";
+import type { OutputFormat } from "../types.js";
 
 test("renderers emit markdown json and sarif", async () => {
   const report = await scan({ root: "tests/fixtures/workflows" });
@@ -36,5 +37,13 @@ test("renderers emit markdown json and sarif", async () => {
         result.locations[0].physicalLocation.region.startLine,
     ).sort((left: number, right: number) => left - right),
     [12, 16, 20],
+  );
+});
+
+test("render rejects unsupported formats instead of returning undefined", async () => {
+  const report = await scan({ root: "tests/fixtures/workflows" });
+  assert.throws(
+    () => render(report, "invalid" as OutputFormat),
+    /Unsupported format 'invalid'\. Use markdown, json, or sarif\./,
   );
 });
