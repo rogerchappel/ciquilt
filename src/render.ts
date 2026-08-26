@@ -8,6 +8,8 @@ export function render(report: ScanReport, format: OutputFormat): string {
     case "markdown": return renderMarkdown(report);
     case "json": return renderJson(report);
     case "sarif": return renderSarif(report);
+    default:
+      throw new Error(`Unsupported format '${String(format)}'. Use markdown, json, or sarif.`);
   }
 }
 
