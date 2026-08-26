@@ -10,6 +10,11 @@ format and uses semantic versioning when versioned releases are published.
 ### Added
 
 - Initial project setup.
+
+### Changed
+
+- `render()` now throws `Unsupported format` for unknown output formats instead of
+  silently returning `undefined`.
 - Publish validated tag artifacts to npm with trusted publishing before creating
   the corresponding GitHub release.
 - Package smoke verification now checks the CLI bin target, release metadata,
