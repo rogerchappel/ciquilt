@@ -23,6 +23,6 @@ export function parseScanArgs(args: string[]): { target: string; options: CliOpt
 
 function requireValue(args: string[], index: number, flag: string): string {
   const value = args[index];
-  if (!value) throw new Error(`${flag} requires a value.`);
+  if (!value || value.startsWith("-")) throw new Error(`${flag} requires a value.`);
   return value;
 }
