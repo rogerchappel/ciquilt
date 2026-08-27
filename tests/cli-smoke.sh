@@ -14,3 +14,14 @@ if node dist/cli.js scan tests/fixtures/workflows definitely-not-a-workflow-path
   exit 1
 fi
 grep -q "scan accepts at most one workflow target; received 2" tmp/surplus.err
+
+for flag in --format -f --output -o; do
+  rejected_output="tmp/rejected-option-value-${flag#-}"
+  rm -f "$rejected_output"
+  if node dist/cli.js scan tests/fixtures/workflows "$flag" --fail-on-findings --output "$rejected_output" >tmp/missing-value.out 2>tmp/missing-value.err; then
+    echo "expected $flag without a value to fail" >&2
+    exit 1
+  fi
+  grep -q -- "$flag requires a value" tmp/missing-value.err
+  test ! -e "$rejected_output"
+done
