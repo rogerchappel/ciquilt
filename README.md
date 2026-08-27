@@ -62,6 +62,9 @@ ciquilt scan .github/workflows --fail-on-findings
 ```
 
 `--fail-on-findings` exits `2` when findings exist. Without it, findings are reported but the scan exits successfully.
+Options that take values reject a following option token, so a missing format or
+output path fails before scanning or writing instead of consuming
+`--fail-on-findings` as the value.
 JSON findings include `sourceLine`, Markdown locations include `:line`, and
 SARIF results use that physical YAML line for code-scanning annotations.
 
