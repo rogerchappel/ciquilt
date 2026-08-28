@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import { collectWorkflowFiles } from "./fs.js";
 import { render, parseFormat } from "./render.js";
 import { scan } from "./scan.js";
 import { PACKAGE_VERSION } from "./version.js";
@@ -24,6 +25,7 @@ async function main(argv: string[]): Promise<number> {
     return 0;
   }
   const { target, options } = parseScanArgs(rest);
+  if (options.output) await rejectWorkflowOutputCollision(target, options.output);
   const report = await scan({ root: target });
   const output = render(report, parseFormat(options.format));
   if (options.output) {
@@ -33,6 +35,26 @@ async function main(argv: string[]): Promise<number> {
     process.stdout.write(output);
   }
   return options.failOnFindings && report.findings.length > 0 ? 2 : 0;
+}
+
+async function rejectWorkflowOutputCollision(target: string, output: string): Promise<void> {
+  const outputPath = path.resolve(output);
+  const outputStat = await fs.stat(outputPath).catch(() => undefined);
+  const workflowFiles = await collectWorkflowFiles(path.resolve(target));
+
+  for (const workflowFile of workflowFiles) {
+    const workflowPath = await fs.realpath(workflowFile);
+    const sameResolvedPath = outputStat
+      ? await fs.realpath(outputPath) === workflowPath
+      : outputPath === workflowPath;
+    const workflowStat = await fs.stat(workflowPath);
+    const sameFile = outputStat
+      && outputStat.dev === workflowStat.dev
+      && outputStat.ino === workflowStat.ino;
+    if (sameResolvedPath || sameFile) {
+      throw new Error(`Output file must not overwrite a scanned workflow: ${output}`);
+    }
+  }
 }
 
 function printHelp(): void {
