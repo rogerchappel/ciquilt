@@ -58,7 +58,7 @@ async function rejectWorkflowOutputCollision(target: string, output: string): Pr
 }
 
 function printHelp(): void {
-  console.log(`ciquilt - stitch GitHub Actions workflows into readable risk reports\n\nUsage:\n  ciquilt scan [workflow-dir-or-file] [--format markdown|json|sarif] [--output file]\n\nOptions:\n  -f, --format            Output format (default: markdown)\n  -o, --output            Write report to a file\n      --fail-on-findings  Exit 2 when findings are present\n  -h, --help              Show help\n  -v, --version           Show version`);
+  console.log(`ciquilt - stitch GitHub Actions workflows into readable risk reports\n\nUsage:\n  ciquilt scan [workflow-dir-or-file] [--format markdown|json|sarif] [--output file]\n\nOptions:\n  -f, --format            Output format (default: markdown)\n  -o, --output            Write report to a file (not a scanned workflow)\n      --fail-on-findings  Exit 2 when findings are present\n  -h, --help              Show help\n  -v, --version           Show version`);
 }
 
 main(process.argv.slice(2)).then((code) => {
