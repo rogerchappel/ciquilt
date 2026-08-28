@@ -9,6 +9,31 @@ node dist/cli.js scan tests/fixtures/workflows --format json --output tmp/cli-sm
 node -e "const r=require('./tmp/cli-smoke.json'); if (!r.findings.length) process.exit(1)"
 node dist/cli.js scan tests/fixtures/workflows --format sarif --output tmp/cli-smoke.sarif.json
 node -e "const r=require('./tmp/cli-smoke.sarif.json'); if (r.version !== '2.1.0') process.exit(1)"
+
+collision_dir="$(mktemp -d "${TMPDIR:-/tmp}/ciquilt-collision.XXXXXX")"
+trap 'rm -rf "$collision_dir"' EXIT
+cp tests/fixtures/workflows/risky.yml "$collision_dir/workflow.yml"
+workflow_hash="$(shasum -a 256 "$collision_dir/workflow.yml" | cut -d ' ' -f 1)"
+
+if node dist/cli.js scan "$collision_dir/workflow.yml" --format json --output "$collision_dir/./workflow.yml" >"$collision_dir/stdout" 2>"$collision_dir/stderr"; then
+  echo "expected relative output alias to be rejected" >&2
+  exit 1
+fi
+grep -q "Output file must not overwrite a scanned workflow" "$collision_dir/stderr"
+test "$workflow_hash" = "$(shasum -a 256 "$collision_dir/workflow.yml" | cut -d ' ' -f 1)"
+
+(
+  cd "$collision_dir"
+  if node "$ROOT/dist/cli.js" scan workflow.yml --format json --output "$collision_dir/workflow.yml" >stdout 2>stderr; then
+    echo "expected absolute output alias to be rejected" >&2
+    exit 1
+  fi
+)
+grep -q "Output file must not overwrite a scanned workflow" "$collision_dir/stderr"
+test "$workflow_hash" = "$(shasum -a 256 "$collision_dir/workflow.yml" | cut -d ' ' -f 1)"
+
+node dist/cli.js scan "$collision_dir/workflow.yml" --format json --output "$collision_dir/report.json"
+node -e "const r=require(process.argv[1]); if (r.workflows.length !== 1) process.exit(1)" "$collision_dir/report.json"
 if node dist/cli.js scan tests/fixtures/workflows definitely-not-a-workflow-path >tmp/surplus.out 2>tmp/surplus.err; then
   echo "expected surplus workflow targets to fail" >&2
   exit 1
