@@ -61,7 +61,7 @@ ciquilt scan .github/workflows --format sarif --output ciquilt.sarif.json
 ciquilt scan .github/workflows --fail-on-findings
 ```
 
-`--fail-on-findings` exits `2` when findings exist. Without it, findings are reported but the scan exits successfully.
+`--fail-on-findings` exits `2` when findings exist. Without it, findings are reported but the scan exits successfully. An `--output` path must be distinct from every workflow collected by the scan; ciquilt rejects relative or absolute aliases before reading and reporting on the workflows, so a source workflow cannot be replaced by its report.
 Options that take values reject a following option token, so a missing format or
 output path fails before scanning or writing instead of consuming
 `--fail-on-findings` as the value.
