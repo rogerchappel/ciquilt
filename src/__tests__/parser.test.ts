@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import { mkdtemp, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import { test } from "node:test";
 import { parseWorkflows } from "../parser.js";
 
@@ -36,4 +39,20 @@ test("parseWorkflows preserves locations for quoted keys and sequence steps", as
   assert.equal(workflow.jobs[0].steps[0].usesLine, 8);
   assert.equal(workflow.jobs[0].steps[1].sourceLine, 9);
   assert.equal(workflow.jobs[0].steps[1].runLine, 9);
+});
+
+test("parseWorkflows rejects an empty workflow directory", async () => {
+  const directory = await mkdtemp(path.join(tmpdir(), "ciquilt-empty-"));
+  await assert.rejects(parseWorkflows(directory), {
+    message: `No supported workflow files found in target: ${directory}`,
+  });
+});
+
+test("parseWorkflows rejects an explicit unsupported file", async () => {
+  const directory = await mkdtemp(path.join(tmpdir(), "ciquilt-unsupported-"));
+  const target = path.join(directory, "workflow.json");
+  await writeFile(target, "{}\n", "utf8");
+  await assert.rejects(parseWorkflows(target), {
+    message: `No supported workflow files found in target: ${target}`,
+  });
 });
