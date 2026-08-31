@@ -62,6 +62,9 @@ ciquilt scan .github/workflows --fail-on-findings
 ```
 
 `--fail-on-findings` exits `2` when findings exist. Without it, findings are reported but the scan exits successfully. An `--output` path must be distinct from every workflow collected by the scan; ciquilt rejects relative or absolute aliases before reading and reporting on the workflows, so a source workflow cannot be replaced by its report.
+An existing target that contains no `.yml` or `.yaml` workflow files exits `1`
+with a diagnostic naming that target, preventing an empty or mistargeted scan
+from being mistaken for a clean report.
 Options that take values reject a following option token, so a missing format or
 output path fails before scanning or writing instead of consuming
 `--fail-on-findings` as the value.

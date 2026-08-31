@@ -34,6 +34,20 @@ test "$workflow_hash" = "$(shasum -a 256 "$collision_dir/workflow.yml" | cut -d 
 
 node dist/cli.js scan "$collision_dir/workflow.yml" --format json --output "$collision_dir/report.json"
 node -e "const r=require(process.argv[1]); if (r.workflows.length !== 1) process.exit(1)" "$collision_dir/report.json"
+empty_dir="$(mktemp -d "${TMPDIR:-/tmp}/ciquilt-empty.XXXXXX")"
+if node dist/cli.js scan "$empty_dir" >tmp/empty.out 2>tmp/empty.err; then
+  echo "expected an empty workflow directory to fail" >&2
+  exit 1
+fi
+grep -Fq "No supported workflow files found in target: $empty_dir" tmp/empty.err
+
+unsupported_file="$empty_dir/workflow.json"
+printf '{}\n' >"$unsupported_file"
+if node dist/cli.js scan "$unsupported_file" >tmp/unsupported.out 2>tmp/unsupported.err; then
+  echo "expected an unsupported workflow file to fail" >&2
+  exit 1
+fi
+grep -Fq "No supported workflow files found in target: $unsupported_file" tmp/unsupported.err
 if node dist/cli.js scan tests/fixtures/workflows definitely-not-a-workflow-path >tmp/surplus.out 2>tmp/surplus.err; then
   echo "expected surplus workflow targets to fail" >&2
   exit 1

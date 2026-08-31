@@ -15,6 +15,9 @@ interface LocationNode {
 export async function parseWorkflows(root: string): Promise<WorkflowSummary[]> {
   const absoluteRoot = path.resolve(root);
   const files = await collectWorkflowFiles(absoluteRoot);
+  if (files.length === 0) {
+    throw new Error(`No supported workflow files found in target: ${root}`);
+  }
   const workflows: WorkflowSummary[] = [];
   for (const file of files) {
     const source = await fs.readFile(file, "utf8");
