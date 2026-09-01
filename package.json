@@ -48,7 +48,7 @@
     "provenance": true
   },
   "dependencies": {
-    "js-yaml": "^5.3.0"
+    "js-yaml": "^5.4.1"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
